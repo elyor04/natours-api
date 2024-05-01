@@ -70,5 +70,6 @@ exports.protect = catchAsync(async function (req, res, next) {
   if (user.isPasswordModified(decoded.iat))
     return next(new AppError("Password Modified!", 401));
 
+  req.user = user;
   next();
 });

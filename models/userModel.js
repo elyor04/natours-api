@@ -36,6 +36,11 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
   photo: String,
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
   __v: { type: Number, select: false },
 });
 
