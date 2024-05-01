@@ -45,7 +45,7 @@ userSchema.methods.checkPassword = async function (password) {
 
 userSchema.methods.isPasswordModified = function (jwtTimestamp) {
   const timestamp = Math.floor(this.modifiedAt.getTime() / 1000);
-  return timestamp > jwtTimestamp;
+  return jwtTimestamp < timestamp;
 };
 
 userSchema.pre("save", async function (next) {
