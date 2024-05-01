@@ -17,6 +17,14 @@ function handleDuplicateFields(err) {
   return new AppError(message, 400);
 }
 
+function handleJWTError(err) {
+  return new AppError("Invalid token!", 401);
+}
+
+function handleTokenExpiredError(err) {
+  return new AppError("Token expired!", 401);
+}
+
 module.exports = function (err, req, res, next) {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
@@ -24,6 +32,8 @@ module.exports = function (err, req, res, next) {
   if (err.name === "CastError") err = handleCastError(err);
   if (err.name === "ValidationError") err = handleValidationError(err);
   if (err.code === 11000) err = handleDuplicateFields(err);
+  if (err.name === "JsonWebTokenError") err = handleJWTError(err);
+  if (err.name === "TokenExpiredError") err = handleTokenExpiredError(err);
 
   if (err.isOperational) {
     res.status(err.statusCode).json({

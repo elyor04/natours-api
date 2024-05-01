@@ -64,7 +64,11 @@ exports.protect = catchAsync(async function (req, res, next) {
   if (!token) return next(new AppError("You are not logged in!", 401));
 
   const decoded = await verifyToken(token);
-  console.log(decoded);
+  const user = await User.findById(decoded.id).select("+passwordChangedAt");
+
+  if (!user) return next(new AppError("User no longer exists!", 401));
+  if (user.isPasswordChanged(decoded.iat))
+    return next(new AppError("Password changed!", 401));
 
   next();
 });
