@@ -23,12 +23,24 @@ router
 router
   .route("/")
   .get(authController.protect, tourController.getAllTours)
-  .post(authController.protect, tourController.createTour);
+  .post(
+    authController.protect,
+    authController.allowTo("admin"),
+    tourController.createTour
+  );
 
 router
   .route("/:id")
   .get(authController.protect, tourController.getTour)
-  .patch(authController.protect, tourController.updateTour)
-  .delete(authController.protect, tourController.deleteTour);
+  .patch(
+    authController.protect,
+    authController.allowTo("admin"),
+    tourController.updateTour
+  )
+  .delete(
+    authController.protect,
+    authController.allowTo("admin"),
+    tourController.deleteTour
+  );
 
 module.exports = router;

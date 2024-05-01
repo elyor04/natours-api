@@ -9,13 +9,33 @@ router.post("/login", authController.login);
 
 router
   .route("/")
-  .get(authController.protect, userController.getAllUsers)
-  .post(authController.protect, userController.createUser);
+  .get(
+    authController.protect,
+    authController.allowTo("admin"),
+    userController.getAllUsers
+  )
+  .post(
+    authController.protect,
+    authController.allowTo("admin"),
+    userController.createUser
+  );
 
 router
   .route("/:id")
-  .get(authController.protect, userController.getUser)
-  .patch(authController.protect, userController.updateUser)
-  .delete(authController.protect, userController.deleteUser);
+  .get(
+    authController.protect,
+    authController.allowTo("admin"),
+    userController.getUser
+  )
+  .patch(
+    authController.protect,
+    authController.allowTo("admin"),
+    userController.updateUser
+  )
+  .delete(
+    authController.protect,
+    authController.allowTo("admin"),
+    userController.deleteUser
+  );
 
 module.exports = router;

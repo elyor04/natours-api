@@ -73,3 +73,10 @@ exports.protect = catchAsync(async function (req, res, next) {
   req.user = user;
   next();
 });
+
+exports.allowTo = function (...roles) {
+  return function (req, res, next) {
+    if (roles.includes(req.user.role)) return next();
+    next(new AppError("You are not allowed to do this operation!", 403));
+  };
+};
