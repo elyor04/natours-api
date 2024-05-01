@@ -33,7 +33,7 @@ exports.login = catchAsync(async function (req, res, next) {
 
   const user = await User.findOne({ email }).select("+password");
 
-  if (!user || !(await user.checkPassword(password, user.password)))
+  if (!user || !(await user.checkPassword(password)))
     return next(new AppError("Invalid email or password", 401));
 
   res.status(200).json({
