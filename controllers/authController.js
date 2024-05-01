@@ -66,7 +66,7 @@ exports.protect = catchAsync(async function (req, res, next) {
   const decoded = await verifyToken(token);
   const user = await User.findById(decoded.id).select("+modifiedAt");
 
-  if (!user) return next(new AppError("User no longer exists!", 401));
+  if (!user) return next(new AppError("User does not exist!", 401));
   if (user.isPasswordModified(decoded.iat))
     return next(new AppError("Password Modified!", 401));
 
