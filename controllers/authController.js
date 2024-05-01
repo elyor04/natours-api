@@ -4,8 +4,25 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
 function signToken(id) {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+  return new Promise((resolve, reject) => {
+    jwt.sign(
+      { id },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN },
+      (err, token) => {
+        if (err) reject(err);
+        else resolve(token);
+      }
+    );
+  });
+}
+
+function verifyToken(token) {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) reject(err);
+      else resolve(decoded);
+    });
   });
 }
 
@@ -20,7 +37,7 @@ exports.signup = catchAsync(async function (req, res, next) {
 
   res.status(201).json({
     status: "success",
-    token: signToken(newUser._id),
+    token: await signToken(newUser._id),
     data: { user: newUser },
   });
 });
@@ -38,6 +55,16 @@ exports.login = catchAsync(async function (req, res, next) {
 
   res.status(200).json({
     status: "success",
-    token: signToken(user._id),
+    token: await signToken(user._id),
   });
+});
+
+exports.protect = catchAsync(async function (req, res, next) {
+  const token = req.headers.authorization?.split(" ")?.[1];
+  if (!token) return next(new AppError("You are not logged in!", 401));
+
+  const decoded = await verifyToken(token);
+  console.log(decoded);
+
+  next();
 });
