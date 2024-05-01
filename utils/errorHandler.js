@@ -18,7 +18,6 @@ function handleDuplicateFields(err) {
 }
 
 module.exports = function (err, req, res, next) {
-  // console.error(err);
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
@@ -35,6 +34,7 @@ module.exports = function (err, req, res, next) {
     res.status(500).json({
       status: "error",
       message: "Something went wrong!",
+      error: err,
     });
   }
 };
