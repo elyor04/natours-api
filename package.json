@@ -1,6 +1,7 @@
 {
   "name": "natours-api",
   "version": "1.0.0",
+  "description": "",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -9,10 +10,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.2",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "validator": "^13.11.0"
   }
 }

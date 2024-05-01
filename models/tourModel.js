@@ -71,6 +71,7 @@ const tourSchema = new mongoose.Schema(
     secretTour: {
       type: Boolean,
       default: false,
+      select: false
     },
   },
   {
@@ -84,7 +85,6 @@ tourSchema.virtual("durationWeeks").get(function () {
 
 tourSchema.pre(/find|findOne/, function (next) {
   this.find({ secretTour: { $ne: true } });
-  this.select("-__v -secretTour");
   next();
 });
 
