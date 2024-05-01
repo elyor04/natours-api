@@ -80,3 +80,21 @@ exports.allowTo = function (...roles) {
     next(new AppError("You are not allowed to do this operation!", 403));
   };
 };
+
+exports.forgotPassword = catchAsync(async function (req, res, next) {
+  const { email } = req.body;
+  if (!email) return next(new AppError("Please provide an email.", 400));
+
+  const user = await User.findOne({ email });
+  if (!user) return next(new AppError("No user found with this email.", 404));
+
+  const resetToken = user.generateResetToken();
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    status: "success",
+    resetToken,
+  });
+});
+
+exports.resetPassword = catchAsync(async function (req, res, next) {});
