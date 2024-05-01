@@ -25,8 +25,8 @@ exports.getAllTours = catchAsync(async function (req, res, next) {
 exports.getTour = catchAsync(async function (req, res, next) {
   const features = new APIFeatures(Tour.findById(req.params.id), req.query);
   features.limitFields();
-  const tour = await features.queryCol;
 
+  const tour = await features.queryCol;
   if (!tour) return next(new AppError("No tour found with that ID", 404));
 
   res.status(200).json({
@@ -51,7 +51,6 @@ exports.updateTour = catchAsync(async function (req, res, next) {
     new: true,
     runValidators: true,
   });
-
   if (!tour) return next(new AppError("No tour found with that ID", 404));
 
   res.status(200).json({
@@ -62,7 +61,6 @@ exports.updateTour = catchAsync(async function (req, res, next) {
 
 exports.deleteTour = catchAsync(async function (req, res, next) {
   const tour = await Tour.findByIdAndDelete(req.params.id);
-
   if (!tour) return next(new AppError("No tour found with that ID", 404));
 
   res.status(200).json({
