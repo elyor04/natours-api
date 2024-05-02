@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
-const sendEmail = require("../utils/email");
+const sendEmail = require("../utils/sendEmail");
 
 function signToken(id) {
   return new Promise((resolve, reject) => {
@@ -131,5 +131,21 @@ exports.resetPassword = catchAsync(async function (req, res, next) {
   res.status(200).json({
     status: "success",
     token: await signToken(user._id),
+  });
+});
+
+exports.updatePassword = catchAsync(async function (req, res, next) {
+  const user = await User.findById(req.user._id).select("+password");
+  if (!(await user.checkPassword(req.body.passwordCurrent)))
+    return next(new AppError("Wrong current password!", 401));
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+
+  res.status(200).json({
+    status: "success",
+    token: await signToken(user._id),
+    data: { user },
   });
 });
