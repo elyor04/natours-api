@@ -83,4 +83,5 @@ userSchema.methods.generateResetToken = function () {
   return resetToken;
 };
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+module.exports = User;

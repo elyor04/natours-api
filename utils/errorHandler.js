@@ -17,24 +17,28 @@ function handleDuplicateFields(err) {
   return new AppError(message, 400);
 }
 
-function handleJWTError(err) {
+function handleJWTError() {
   return new AppError("Invalid token!", 401);
 }
 
-function handleTokenExpiredError(err) {
+function handleTokenExpiredError() {
   return new AppError("Token expired!", 401);
 }
 
-module.exports = function (err, req, res, next) {
-  // console.log(err);
+function handleSendEmailError() {
+  return new AppError("Cannot send email. Try again later!", 500);
+}
+
+function errorHandler(err, req, res, next) {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
   if (err.name === "CastError") err = handleCastError(err);
   if (err.name === "ValidationError") err = handleValidationError(err);
   if (err.code === 11000) err = handleDuplicateFields(err);
-  if (err.name === "JsonWebTokenError") err = handleJWTError(err);
-  if (err.name === "TokenExpiredError") err = handleTokenExpiredError(err);
+  if (err.name === "JsonWebTokenError") err = handleJWTError();
+  if (err.name === "TokenExpiredError") err = handleTokenExpiredError();
+  if (err.code === "EENVELOPE") err = handleSendEmailError();
 
   if (err.isOperational) {
     res.status(err.statusCode).json({
@@ -42,9 +46,12 @@ module.exports = function (err, req, res, next) {
       message: err.message,
     });
   } else {
+    console.error(err);
     res.status(500).json({
       status: "error",
       message: "Something went wrong!",
     });
   }
-};
+}
+
+module.exports = errorHandler;

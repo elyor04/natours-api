@@ -71,7 +71,7 @@ const tourSchema = new mongoose.Schema(
     secretTour: {
       type: Boolean,
       default: false,
-      select: false
+      select: false,
     },
     __v: { type: Number, select: false },
   },
@@ -94,4 +94,5 @@ tourSchema.pre("aggregate", function (next) {
   next();
 });
 
-module.exports = mongoose.model("Tour", tourSchema);
+const Tour = mongoose.model("Tour", tourSchema);
+module.exports = Tour;
