@@ -40,11 +40,11 @@ exports.createUser = catchAsync(async function (req, res, next) {
 });
 
 exports.updateUser = catchAsync(async function (req, res, next) {
-  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+  const user = await User.findById(req.params.id);
   if (!user) return next(new AppError("No user found with that ID", 404));
+
+  for (field in req.body) user[field] = req.body[field];
+  await user.save();
 
   res.status(200).json({
     status: "success",
