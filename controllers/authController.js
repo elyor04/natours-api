@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
@@ -111,4 +112,24 @@ If you didn't forget your password, please ignore this email`;
   });
 });
 
-exports.resetPassword = catchAsync(async function (req, res, next) {});
+exports.resetPassword = catchAsync(async function (req, res, next) {
+  const resetToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    resetToken,
+    resetExpires: { $gte: Date.now() },
+  });
+  if (!user) return next(new AppError("Invalid token!", 400));
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+
+  res.status(200).json({
+    status: "success",
+    token: await signToken(user._id),
+  });
+});
