@@ -3,6 +3,7 @@ const APIFeatures = require("../utils/apiFeatures");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const filterObj = require("../utils/filterObj");
+const bcrypt = require("bcryptjs");
 
 exports.getMe = catchAsync(async function (req, res, next) {
   const user = await User.findById(req.user._id);
@@ -80,10 +81,27 @@ exports.createUser = catchAsync(async function (req, res, next) {
 });
 
 exports.updateUser = catchAsync(async function (req, res, next) {
-  if (req.body.password !== req.body.passwordConfirm)
+  const data = filterObj(
+    req.body,
+    "name",
+    "email",
+    "password",
+    "passwordConfirm",
+    "photo",
+    "role",
+    "active"
+  );
+
+  if (data.password !== data.passwordConfirm)
     return next(new AppError("Passwords are not the same!", 400));
 
-  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+  if (data.password) {
+    data.password = await bcrypt.hash(data.password, 12);
+    data.passwordConfirm = undefined;
+    data.modifiedAt = Date.now() - 1000;
+  }
+
+  const user = await User.findByIdAndUpdate(req.params.id, data, {
     new: true,
     runValidators: true,
   });
@@ -91,7 +109,7 @@ exports.updateUser = catchAsync(async function (req, res, next) {
 
   res.status(200).json({
     status: "success",
-    data: { user },
+    data: { user: Object.assign(user, data) },
   });
 });
 
