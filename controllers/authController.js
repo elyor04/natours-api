@@ -143,6 +143,5 @@ exports.updatePassword = catchAsync(async function (req, res, next) {
   res.status(200).json({
     status: "success",
     token: await signToken(user._id),
-    data: { user },
   });
 });
