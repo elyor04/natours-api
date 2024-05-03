@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const APIFeatures = require("../utils/apiFeatures");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const filterObj = require("../utils/filterObj");
 
 exports.getAllUsers = catchAsync(async function (req, res, next) {
   const features = new APIFeatures(User.find(), req.query);
@@ -12,6 +13,27 @@ exports.getAllUsers = catchAsync(async function (req, res, next) {
     status: "success",
     results: users.length,
     data: { users },
+  });
+});
+
+exports.updateMe = catchAsync(async function (req, res, next) {
+  if (req.body.password || req.body.passwordConfirm)
+    return next(
+      new AppError(
+        "This route is not for password updates. Please use /updatePassword",
+        400
+      )
+    );
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    filterObj(req.body, "name", "email", "photo"),
+    { new: true, runValidators: true }
+  );
+
+  res.status(200).json({
+    status: "success",
+    data: { user },
   });
 });
 

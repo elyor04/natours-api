@@ -4,6 +4,7 @@ const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const sendEmail = require("../utils/sendEmail");
+const filterObj = require("../utils/filterObj");
 
 function signToken(id) {
   return new Promise((resolve, reject) => {
@@ -29,13 +30,9 @@ function verifyToken(token) {
 }
 
 exports.signup = catchAsync(async function (req, res, next) {
-  const newUser = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-    photo: req.body.photo,
-  });
+  const newUser = await User.create(
+    filterObj(req.body, "name", "email", "password", "passwordConfirm", "photo")
+  );
 
   res.status(201).json({
     status: "success",
