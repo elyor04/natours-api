@@ -37,8 +37,8 @@ class APIFeatures {
   }
 
   paginate() {
-    const page = +this.queryReq.page ?? 1;
-    const limit = +this.queryReq.limit ?? 100;
+    const page = +this.queryReq.page || 1;
+    const limit = +this.queryReq.limit || 100;
     const skip = (page - 1) * limit;
     this.queryCol.skip(skip).limit(limit);
 
