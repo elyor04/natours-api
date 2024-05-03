@@ -4,15 +4,12 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const filterObj = require("../utils/filterObj");
 
-exports.getAllUsers = catchAsync(async function (req, res, next) {
-  const features = new APIFeatures(User.find(), req.query);
-  features.filter().limitFields().paginate().sort();
-  const users = await features.queryCol;
+exports.getMe = catchAsync(async function (req, res, next) {
+  const user = await User.findById(req.user._id);
 
   res.status(200).json({
     status: "success",
-    results: users.length,
-    data: { users },
+    data: { user },
   });
 });
 
@@ -43,6 +40,18 @@ exports.deleteMe = catchAsync(async function (req, res, next) {
   res.status(200).json({
     status: "success",
     data: null,
+  });
+});
+
+exports.getAllUsers = catchAsync(async function (req, res, next) {
+  const features = new APIFeatures(User.find(), req.query);
+  features.filter().limitFields().paginate().sort();
+  const users = await features.queryCol;
+
+  res.status(200).json({
+    status: "success",
+    results: users.length,
+    data: { users },
   });
 });
 
