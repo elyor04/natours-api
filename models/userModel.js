@@ -50,6 +50,11 @@ const userSchema = new mongoose.Schema({
     type: Date,
     select: false,
   },
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
   __v: { type: Number, select: false },
 });
 
@@ -61,6 +66,11 @@ userSchema.pre("save", async function (next) {
     this.resetToken = undefined;
     this.resetExpires = undefined;
   }
+  next();
+});
+
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
   next();
 });
 

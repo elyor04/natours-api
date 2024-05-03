@@ -37,6 +37,15 @@ exports.updateMe = catchAsync(async function (req, res, next) {
   });
 });
 
+exports.deleteMe = catchAsync(async function (req, res, next) {
+  await User.findByIdAndUpdate(req.user._id, { active: false });
+
+  res.status(200).json({
+    status: "success",
+    data: null,
+  });
+});
+
 exports.getUser = catchAsync(async function (req, res, next) {
   const features = new APIFeatures(User.findById(req.params.id), req.query);
   features.limitFields();
