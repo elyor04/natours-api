@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(val) {
-        return val === this.password;
+        return val === this.password || this instanceof mongoose.Query;
       },
       message: "Passwords are not the same!",
     },

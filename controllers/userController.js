@@ -71,11 +71,14 @@ exports.createUser = catchAsync(async function (req, res, next) {
 });
 
 exports.updateUser = catchAsync(async function (req, res, next) {
-  const user = await User.findById(req.params.id);
-  if (!user) return next(new AppError("No user found with that ID", 404));
+  if (req.body.password !== req.body.passwordConfirm)
+    return next(new AppError("Passwords are not the same!", 400));
 
-  for (field in req.body) user[field] = req.body[field];
-  await user.save();
+  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  if (!user) return next(new AppError("No user found with that ID", 404));
 
   res.status(200).json({
     status: "success",
