@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
   photo: String,
   role: {
     type: String,
-    enum: ["user", "admin"],
+    enum: ["user", "admin", "guide"],
     default: "user",
   },
   resetToken: {
@@ -55,7 +55,6 @@ const userSchema = new mongoose.Schema({
     default: true,
     select: false,
   },
-  __v: { type: Number, select: false },
 });
 
 userSchema.pre("save", async function (next) {
