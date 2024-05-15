@@ -25,7 +25,7 @@ router
   .get(authController.protect, tourController.getAllTours)
   .post(
     authController.protect,
-    authController.allowTo("admin"),
+    authController.allowTo("admin", "guide"),
     tourController.createTour
   );
 
@@ -34,12 +34,12 @@ router
   .get(authController.protect, tourController.getTour)
   .patch(
     authController.protect,
-    authController.allowTo("admin"),
+    authController.allowTo("admin", "guide"),
     tourController.updateTour
   )
   .delete(
     authController.protect,
-    authController.allowTo("admin"),
+    authController.allowTo("admin", "guide"),
     tourController.deleteTour
   );
 

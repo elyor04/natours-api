@@ -3,6 +3,8 @@ const morgan = require("morgan");
 
 const tourRouter = require("./routes/tourRouter");
 const userRouter = require("./routes/userRouter");
+const reviewRouter = require("./routes/reviewRouter");
+
 const errorHandler = require("./utils/errorHandler");
 const AppError = require("./utils/appError");
 
@@ -13,6 +15,7 @@ app.use(express.json());
 
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Cannot find ${req.originalUrl}`, 404));
