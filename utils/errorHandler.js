@@ -1,35 +1,35 @@
 const AppError = require("./appError");
 
-function handleCastError(err) {
+const handleCastError = (err) => {
   const message = `Invalid ${err.path}: ${err.value}`;
   return new AppError(message, 400);
-}
+};
 
-function handleValidationError(err) {
+const handleValidationError = (err) => {
   const errors = Object.values(err.errors).map((el) => el.message);
   const message = `Invalid input data. ${errors.join(". ")}`;
   return new AppError(message, 400);
-}
+};
 
-function handleDuplicateFields(err) {
+const handleDuplicateFields = (err) => {
   const value = err.errmsg.match(/\".+\"/)[0];
   const message = `Duplicate field value: ${value}. Please use another value!`;
   return new AppError(message, 400);
-}
+};
 
-function handleJWTError() {
+const handleJWTError = () => {
   return new AppError("Invalid token!", 401);
-}
+};
 
-function handleTokenExpiredError() {
+const handleTokenExpiredError = () => {
   return new AppError("Token expired!", 401);
-}
+};
 
-function handleSendEmailError() {
+const handleSendEmailError = () => {
   return new AppError("Cannot send email. Try again later!", 500);
-}
+};
 
-function errorHandler(err, req, res, next) {
+const errorHandler = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
@@ -52,6 +52,6 @@ function errorHandler(err, req, res, next) {
       message: "Something went wrong!",
     });
   }
-}
+};
 
 module.exports = errorHandler;

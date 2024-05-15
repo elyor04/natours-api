@@ -9,7 +9,7 @@ const transport = nodemailer.createTransport({
   },
 });
 
-function sendEmail(email, subject, message) {
+const sendEmail = (email, subject, message) => {
   const mailOptions = {
     from: "Elyor Tukhtamuratov <hello@elyor.com>",
     to: email,
@@ -17,6 +17,6 @@ function sendEmail(email, subject, message) {
     text: message,
   };
   return transport.sendMail(mailOptions);
-}
+};
 
 module.exports = sendEmail;

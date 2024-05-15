@@ -6,7 +6,7 @@ const AppError = require("../utils/appError");
 const sendEmail = require("../utils/sendEmail");
 const filterObj = require("../utils/filterObj");
 
-function signToken(id) {
+const signToken = (id) => {
   return new Promise((resolve, reject) => {
     jwt.sign(
       { id },
@@ -18,18 +18,18 @@ function signToken(id) {
       }
     );
   });
-}
+};
 
-function verifyToken(token) {
+const verifyToken = (token) => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (err) reject(err);
       else resolve(decoded);
     });
   });
-}
+};
 
-exports.signup = catchAsync(async function (req, res, next) {
+exports.signup = catchAsync(async (req, res, next) => {
   const newUser = await User.create(
     filterObj(req.body, "name", "email", "password", "passwordConfirm", "photo")
   );
@@ -41,7 +41,7 @@ exports.signup = catchAsync(async function (req, res, next) {
   });
 });
 
-exports.login = catchAsync(async function (req, res, next) {
+exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password)
@@ -58,7 +58,7 @@ exports.login = catchAsync(async function (req, res, next) {
   });
 });
 
-exports.protect = catchAsync(async function (req, res, next) {
+exports.protect = catchAsync(async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")?.[1];
   if (!token) return next(new AppError("You are not logged in!", 401));
 
@@ -73,14 +73,14 @@ exports.protect = catchAsync(async function (req, res, next) {
   next();
 });
 
-exports.allowTo = function (...roles) {
-  return function (req, res, next) {
+exports.allowTo = (...roles) => {
+  return (req, res, next) => {
     if (roles.includes(req.user.role)) return next();
     next(new AppError("You are not allowed to do this operation!", 403));
   };
 };
 
-exports.forgotPassword = catchAsync(async function (req, res, next) {
+exports.forgotPassword = catchAsync(async (req, res, next) => {
   const { email } = req.body;
   if (!email) return next(new AppError("Please provide an email.", 400));
 
@@ -109,7 +109,7 @@ If you didn't forget your password, please ignore this email`;
   });
 });
 
-exports.resetPassword = catchAsync(async function (req, res, next) {
+exports.resetPassword = catchAsync(async (req, res, next) => {
   const resetToken = crypto
     .createHash("sha256")
     .update(req.params.token)
@@ -131,7 +131,7 @@ exports.resetPassword = catchAsync(async function (req, res, next) {
   });
 });
 
-exports.updatePassword = catchAsync(async function (req, res, next) {
+exports.updatePassword = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id).select("+password");
   if (!(await user.checkPassword(req.body.passwordCurrent)))
     return next(new AppError("Wrong current password!", 401));
